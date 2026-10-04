@@ -161,6 +161,15 @@ server/audiences/
 # the same shape reached the infra-db-bun root through the retired-dev-host
 # working-tree land (1502b1bf) before this entry existed. Ignored at the
 # TEMPLATE level so every regen preserves it.
+# The per-repo doc emission (repo_skills_dir on cli_routing): ONE directory
+# per repo-owned doc, named `repos-<slug>`. The pattern is exactly that, never
+# a bare `.opencode/` — a bare .opencode/ would also hide the repo's own
+# hand-written files (opencode.json, hand-authored skills), and the emitted
+# directory is the only thing that belongs here. TEMPLATE level, for the reason
+# the ecosystem.config.js entry above gives: the first render is a commit
+# storm across every checkout (commit_outputs commits every non-ignored
+# generated path), so the ignore must be live BEFORE the first emission.
+.opencode/skills/repos-*/
 **/.claude/skills/
 **/.agents/skills/
 **/.cursor/skills/
