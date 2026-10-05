@@ -1,16 +1,10 @@
 /**
  * @system notify-cache
  * @status handwritten
- * @edit edit directly
- *
- * Bootloader injection per constitution `configured-primitives`.
- * Consumers (services, daemons) call configure() at startup, providing
- * the NotifyAdapter (their LISTEN client) and the load context (a sql
- * client or whatever the loader closures want).
- *
- * Until configured, caches still work for unit tests via the
- * `notifyAdapter` and `loadContext` options on createNotifyCache directly.
- * Production code goes through configure() so the wiring is centralised.
+ * @edit bootloader injection per `configured-primitives` — consumers call
+ *   configure() at startup to supply the NotifyAdapter (their LISTEN client)
+ *   and the load context. Until then, tests can pass both via
+ *   createNotifyCache options directly.
  */
 
 import type { NotifyAdapter } from "./types.ts";

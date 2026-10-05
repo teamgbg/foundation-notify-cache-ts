@@ -1,12 +1,9 @@
 /**
  * @system notify-cache
  * @status handwritten
- * @edit edit directly
- *
- * Process-global notify-cache registry singleton. Mirrors CacheRegistry
- * / WorkerPoolRegistry / WatchdogRegistry per `cache-is-the-only-cache`
- * precedent. Every NotifyCache auto-registers on construction for
- * central visibility (operator can list, disable, stats() all caches).
+ * @edit the process-global notify-cache registry singleton. Every cache
+ *   auto-registers on construction for central visibility (list, disable,
+ *   stats across all caches).
  */
 
 import type { NotifyCache } from "./notify-cache.ts";

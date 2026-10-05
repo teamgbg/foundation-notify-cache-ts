@@ -1,12 +1,8 @@
 /**
  * @system notify-cache
  * @status handwritten
- * @edit edit directly
- *
- * Type contracts for @teamscala/notify-cache. The primitive is a hot
- * in-memory snapshot cache whose invalidation is driven by Postgres
- * LISTEN/NOTIFY — closing the canonical pattern from constitution
- * `notify-cache-is-the-only-snapshot-cache`.
+ * @edit the type contracts for @teamscala/notify-cache — the hot snapshot
+ *   primitive whose invalidation is driven by Postgres LISTEN/NOTIFY.
  */
 
 export interface NotifyCacheStats {
@@ -40,15 +36,12 @@ export interface NotifyCacheEvent {
 }
 
 /**
- * Minimal contract for the LISTEN connection. Consumers inject an
- * adapter wrapping their own Postgres client (postgres.js, pg, etc.)
- * so notify-cache stays driver-agnostic and DB-tier-agnostic.
+ * Minimal contract for the LISTEN connection. Consumers inject an adapter
+ * wrapping their own Postgres client so notify-cache stays driver-agnostic.
  */
 export interface NotifyAdapter {
 	/**
-	 * Subscribe to a Postgres NOTIFY channel. The handler is called with
-	 * the payload (or empty string if no payload). Returns an
-	 * unsubscribe function.
+	 * Subscribe to a Postgres NOTIFY channel. Returns an unsubscribe function.
 	 */
 	listen(
 		channel: string,
@@ -59,25 +52,18 @@ export interface NotifyAdapter {
 export interface NotifyCacheOptions<T> {
 	/** Unique name in the process. `<package>:<purpose>` convention. */
 	name: string;
-	/**
-	 * Loader called to populate the cache. Receives an opaque "context"
-	 * value injected by the bootloader via configure() — typically a
-	 * postgres client. Consumer controls what flows in via configure().
-	 */
+	/** Loader called to populate the cache. Receives the opaque context the
+	 *  bootloader injects via configure(). */
 	load: (ctx: unknown) => Promise<T>;
 	/** Postgres NOTIFY channels that should trigger a rehydrate. */
 	invalidateOn: string[];
 	/**
-	 * Optional ceiling on staleness. If no NOTIFY fires within this
-	 * window, the next `get()` triggers a forced reload. Default: 0
-	 * (disabled — invalidation is purely event-driven).
+	 * Ceiling on staleness when no NOTIFY fires (a dropped LISTEN connection).
+	 * Default 0 — invalidation is purely event-driven.
 	 */
 	staleAfterMs?: number;
 	/** Optional event sink for observability. */
 	emit?: (event: NotifyCacheEvent) => void;
-	/**
-	 * Initial enabled state. `false` means `get()` always loads fresh
-	 * — useful for troubleshooting cache poisoning. Default: true.
-	 */
+	/** `false` makes `get()` always load fresh. Default: true. */
 	enabled?: boolean;
 }
