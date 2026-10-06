@@ -30,7 +30,15 @@
 # refuse, so a failed fetch refuses instead of passing.
 set -u
 
-remotes_dir="$(git rev-parse --git-dir 2>/dev/null)/info/lefthook-remotes"
+# WHY --git-common-dir AND NOT --git-dir: the pinned copy installs at the
+# COMMON git dir in every checkout, and a linked worktree's --git-dir answers
+# .git/worktrees/<name> — the worktree-local dir lefthook never writes — so
+# the first push of any worktree branch read as not-installed and was refused
+# (measured 2026-10-03, scratch worktree: the copy sat at <repo>/.git/info/
+# lefthook-remotes, the door looked under <repo>/.git/worktrees/wt/info/ and
+# refused; the identical door in the main checkout passed). git's own
+# --git-common-dir is the single home every checkout shares.
+remotes_dir="$(git rev-parse --git-common-dir 2>/dev/null)/info/lefthook-remotes"
 pinned_ref="$(sed -n 's/^[[:space:]]*ref:[[:space:]]*//p' lefthook.yml 2>/dev/null | head -1)"
 if [ -z "$pinned_ref" ]; then
   printf 'REFUSED: this repo'"'"'s lefthook.yml declares no remotes ref, so the pinned guard-hook-transport copy cannot be named — refusing rather than passing a push whose pinned state cannot be verified\n' >&2
