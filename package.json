@@ -1,6 +1,6 @@
 {
 	"_generated": {
-		"system": "package-json@1.0.0",
+		"system": "notify-cache",
 		"status": "generated",
 		"edit": "edit src/ — dependencies and exports derive from imports; everything else preserved"
 	},
